@@ -3,7 +3,7 @@ import DetailElement from "../elements/detail.element";
 import FormElement from "../elements/form.elements";
 
 function IndexPage() {
-  const [section, setSection] = useState("upload");
+  const [section, setSection] = useState("detail");
 
   if (section === "upload") {
     return (
@@ -15,7 +15,14 @@ function IndexPage() {
       </div>
     );
   } else if (section === "detail") {
-    return <DetailElement />;
+    return (
+      <div className="w-full flex flex-col items-center">
+        <h1 className="mt-20 text-left w-full ml-40 text-2xl">
+          Sistema de Carga de Datos
+        </h1>
+        <DetailElement></DetailElement>
+      </div>
+    );
   }
 }
 
