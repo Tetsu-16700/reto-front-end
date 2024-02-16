@@ -101,7 +101,7 @@ function LoginPage() {
                   </span>
                 </div>
 
-                <Button type="submit" disabled={isSubmitting}>
+                <Button type="submit" >
                   Submit
                 </Button>
               </form>

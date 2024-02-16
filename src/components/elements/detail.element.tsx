@@ -7,6 +7,7 @@ function DetailElement({ setSection }: { setSection: any }) {
   const { toast } = useToast();
   const [showInfo, setShowInfo] = useState(true);
 
+  // muestra de notificaciones
   function showToast() {
     toast({
       variant: "destructive",
@@ -20,6 +21,7 @@ function DetailElement({ setSection }: { setSection: any }) {
     <div className="mx-10 border shadow-md rounded-lg flex flex-col gap-8 items-center w-[80%] mt-10 p-4">
       <header className="w-full flex justify-between gap-8">
         <div className="flex flex-col  items-center w-[90%] ">
+          {/* operador ternario evalua la condicion de:*/}
           {showInfo ? (
             <Alert className="w-fit text-sm border-green-500 text-green-500  ">
               <AlertDescription>
@@ -35,6 +37,7 @@ function DetailElement({ setSection }: { setSection: any }) {
           )}
         </div>
         <div>
+          {/* para cargar archivos */}
           <Button onClick={(e) => setSection("upload")}> New File</Button>
         </div>
       </header>
