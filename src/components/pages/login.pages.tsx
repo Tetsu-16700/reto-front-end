@@ -1,14 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 import { loginSchema } from "@/models/login.models";
+import { AuthHook } from "@/hooks/auth.hook";
 
 function LoginPage() {
   const { toast } = useToast();
 
   const navigate = useNavigate();
+
+  const { validateSessionLogin } = AuthHook();
+
+  useEffect(() => {
+    validateSessionLogin();
+  }, []);
 
   // TODO remove THIS SECTION
 
@@ -42,6 +49,7 @@ function LoginPage() {
 
   function fetchLogin(values: any) {
     if (values.email === "abc@gmail.com" && values.password === "abc") {
+      window.localStorage.setItem("auth", "authenticated");
       return true;
     } else {
       return false;
@@ -70,7 +78,7 @@ function LoginPage() {
               isSubmitting,
               /* and other goodies */
             }) => (
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <div className="flex flex-col gap-2">
                   <label htmlFor="">Email</label>
                   <input
@@ -82,7 +90,9 @@ function LoginPage() {
                     onBlur={handleBlur}
                     value={values.email}
                   />
-                  <span>{errors.email && touched.email && errors.email}</span>
+                  <span className="text-sm text-red-600">
+                    {errors.email && touched.email && errors.email}
+                  </span>
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -96,14 +106,12 @@ function LoginPage() {
                     onBlur={handleBlur}
                     value={values.password}
                   />
-                  <span>
+                  <span className="text-sm text-red-600">
                     {errors.password && touched.password && errors.password}
                   </span>
                 </div>
 
-                <Button type="submit" >
-                  Submit
-                </Button>
+                <Button type="submit">Submit</Button>
               </form>
             )}
             {/* <form
