@@ -1,16 +1,21 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Formik } from "formik";
 import { useNavigate } from "react-router-dom";
 import { loginSchema } from "@/models/login.models";
+import { AuthHook } from "../hooks/auth.hook";
 
 function LoginPage() {
   const { toast } = useToast();
 
   const navigate = useNavigate();
 
-  // TODO remove THIS SECTION
+  const { validateSessionLogin } = AuthHook();
+
+  useEffect(() => {
+    validateSessionLogin();
+  }, []);
 
   const [data, setData] = useState<{
     email: string;
@@ -41,7 +46,8 @@ function LoginPage() {
   }
 
   function fetchLogin(values: any) {
-    if (values.email === "abc@gmail.com" && values.password === "abc") {
+    if (values.email === "abc@mail.com" && values.password === "abc") {
+      window.localStorage.setItem("auth", "authenticated");
       return true;
     } else {
       return false;
@@ -51,7 +57,7 @@ function LoginPage() {
   return (
     <div className="w-full flex justify-center ">
       <div className="mt-40">
-        <h1 className="text-2xl font-bold">Sistema de carga de datos</h1>
+        <h1 className=" text-2xl font-serif">Sistema de Carga de Datos</h1>
         <div className="mx-8 mt-10">
           <Formik
             initialValues={{ email: "", password: "" }}
@@ -70,9 +76,9 @@ function LoginPage() {
               isSubmitting,
               /* and other goodies */
             }) => (
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} className="flex flex-col gap-4 font-serif">
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="">Email</label>
+                  <label htmlFor="" >Email</label>
                   <input
                     autoComplete="off"
                     className="px-2 py-1 border rounded-md border-slate-500 outline-none"
@@ -82,7 +88,9 @@ function LoginPage() {
                     onBlur={handleBlur}
                     value={values.email}
                   />
-                  <span>{errors.email && touched.email && errors.email}</span>
+                  <span className="text-sm text-red-500">
+                    {errors.email && touched.email && errors.email}
+                  </span>
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -96,43 +104,16 @@ function LoginPage() {
                     onBlur={handleBlur}
                     value={values.password}
                   />
-                  <span>
+                  <span className="text-sm text-red-500">
                     {errors.password && touched.password && errors.password}
                   </span>
                 </div>
 
-                <Button type="submit" >
+                <Button type="submit" className="bg-blue-500">
                   Submit
                 </Button>
               </form>
             )}
-            {/* <form
-              action=""
-              className="flex flex-col gap-4"
-              onSubmit={handleSubmit}
-            >
-              <div className="flex flex-col gap-2">
-                <label htmlFor="">Email</label>
-                <input
-                  className="px-2 py-1 border rounded-md border-slate-500 outline-none"
-                  type="text"
-                  onChange={(e) => setData({ ...data, email: e.target.value })}
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="">Password</label>
-                <input
-                  className="px-2 py-1 border rounded-md  border-slate-500 outline-none"
-                  type="password"
-                  onChange={(e) =>
-                    setData({ ...data, password: e.target.value })
-                  }
-                />
-              </div>
-              <div className="flex flex-col gap-2">
-                <Button>Login</Button>
-              </div>
-            </form> */}
           </Formik>
         </div>
       </div>

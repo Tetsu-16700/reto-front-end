@@ -7,6 +7,44 @@ function DetailElement({ setSection }: { setSection: any }) {
   const { toast } = useToast();
   const [showInfo, setShowInfo] = useState(true);
 
+  const [error, setError] = useState([
+    {
+      name: {
+        value: "Sky",
+        message: "",
+      },
+      email: {
+        value: "",
+        message: "Required email",
+      },
+      age: {
+        value: 20,
+        message: "",
+      },
+    },
+    {
+      name: {
+        value: "Blue",
+        message: "",
+      },
+      email: {
+        value: "blue@mail.com",
+        message: "",
+      },
+      age: {
+        value: "",
+        message: "Required email",
+      },
+    }
+    
+  ]);
+
+ function handleDelete(index:number){
+  const newError = error.slice(index )
+  setError(newError);
+  showToast();
+ }
+
   // muestra de notificaciones
   function showToast() {
     toast({
@@ -17,9 +55,10 @@ function DetailElement({ setSection }: { setSection: any }) {
     });
   }
 
+
   return (
-    <div className="mx-10 border shadow-md rounded-lg flex flex-col gap-8 items-center w-[80%] mt-10 p-4">
-      <header className="w-full flex justify-between gap-8">
+    <div className="mx-10  border shadow-md rounded-lg flex flex-col gap-8 items-center w-[80%] mt-10 p-4 font-serif">
+      <header className="w-full flex justify-between gap-8 ">
         <div className="flex flex-col  items-center w-[90%] ">
           {/* operador ternario evalua la condicion de:*/}
           {showInfo ? (
@@ -27,7 +66,7 @@ function DetailElement({ setSection }: { setSection: any }) {
               <AlertDescription>
                 You can add components and dependencies to your app using the
                 cli.{" "}
-                <span onClick={(e) => setShowInfo(false)} role="button">
+                <span onClick={() => setShowInfo(false)} role="button">
                   ❎
                 </span>
               </AlertDescription>
@@ -38,7 +77,7 @@ function DetailElement({ setSection }: { setSection: any }) {
         </div>
         <div>
           {/* para cargar archivos */}
-          <Button onClick={(e) => setSection("upload")}> New File</Button>
+          <Button className="bg-blue-500" onClick={() => setSection("upload")}> New File</Button>
         </div>
       </header>
 
@@ -59,64 +98,62 @@ function DetailElement({ setSection }: { setSection: any }) {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td valign="top">2</td>
-                <td valign="top">
-                  <input
-                    className="w-full px-2 py-1 rounded-md border outline-none"
-                    type="text"
-                  />
-                </td>
-                <td valign="top">
-                  <div className="flex flex-col">
+              {error.map((error, index) => (
+                <tr>
+                  <td valign="top">{index + 1}</td>
+                  <td valign="top">
                     <input
-                      className="px-2 py-1 rounded-md border border-red-500 outline-none"
+                      className="w-full px-2 py-1 rounded-md border outline-none"
                       type="text"
+                      defaultValue={error.name.value}
                     />
+                  </td>
+                  {error.name.message ? (
                     <span className="text-red-500 text-sm">
                       El formato email no es valido
                     </span>
-                  </div>
-                </td>
-                <td valign="top">
-                  <input
-                    className="px-2 w-20 py-1 rounded-md border outline-none"
-                    type="text"
-                  />
-                </td>
-                <td valign="top">
-                  <Button onClick={showToast}>Retry</Button>
-                </td>
-              </tr>
-              <tr>
-                <td valign="top">4</td>
-                <td valign="top">
-                  <input
-                    className="w-full px-2 py-1 rounded-md border outline-none"
-                    type="text"
-                  />
-                </td>
-                <td valign="top">
-                  <div className="flex flex-col">
-                    <input
-                      className="px-2 py-1 rounded-md border border-red-500 outline-none"
-                      type="text"
-                    />
-                    <span className="text-red-500 text-sm">
-                      El formato email no es valido
-                    </span>
-                  </div>
-                </td>
-                <td valign="top">
-                  <input
-                    className="px-2 w-20 py-1 rounded-md border outline-none"
-                    type="text"
-                  />
-                </td>
-                <td valign="top">
-                  <Button onClick={showToast}>Retry</Button>
-                </td>
-              </tr>
+                  ) : (
+                    ""
+                  )}
+                  <td valign="top">
+                    <div className="flex flex-col">
+                      <input
+                        className="px-2 py-1 rounded-md border border-red-500 outline-none"
+                        type="text"
+                        defaultValue={error.email.value}
+                      />
+                      {error.email.message ? (
+                        <span className="text-red-500 text-sm">
+                          El formato email no es valido
+                        </span>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </td>
+                  <td valign="top">
+                    <div className="flex flex-col">
+                      <input
+                        className={`px-2 w-20 py-1 rounded-md border outline-none ${
+                          error.age.message ? "border-red-500" : ""
+                        }`}
+                        type="text"
+                        defaultValue={error.age.value}
+                      />
+                      {error.age.message ? (
+                        <span className="text-red-500 text-sm">
+                          El formato email no es valido
+                        </span>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </td>
+                  <td valign="top">
+                    <Button className="bg-blue-500" onClick={() => handleDelete(index) }>Retry</Button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
