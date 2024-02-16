@@ -1,77 +1,143 @@
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 import { Button } from "../ui/button";
-// mensaje de alerta
 import { useToast } from "@/components/ui/use-toast";
+import { Formik } from "formik";
+import { useNavigate } from "react-router-dom";
+import { loginSchema } from "@/models/login.models";
 
-export default function LoginPage() {
-  // funcion para utlizar mensaje de alerta
+function LoginPage() {
   const { toast } = useToast();
 
-  const [data, setData] = useState({
+  const navigate = useNavigate();
+
+  // TODO remove THIS SECTION
+
+  const [data, setData] = useState<{
+    email: string;
+    password: string;
+  }>({
     email: "",
     password: "",
   });
 
-  function handleSumit(e: FormEvent) {
-    e.preventDefault();
-    // valida que el input tenga valor
-    if (data.email.length && data.password.length) {
-      const response = fetchLogin();
-      if (!response) {
-        toast({
-          variant: "destructive",
-          description: "👀Uh oh! Something went wrong.",
-        });
-      } else {
-        toast({
-          description: "✅Your message has been successfully sent!",
-        });
-      }
+  function handleSubmit(values: any) {
+    const response = fetchLogin(values);
+    if (!response) {
+      toast({
+        variant: "destructive",
+        title: "Error!",
+        description: "Error en la autenticación",
+      });
+    } else {
+      toast({
+        title: "Ok",
+        description: "Credenciales validas, redirigendo...",
+      });
+
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
     }
   }
 
-  //   funcion que captura evento
-  function fetchLogin() {
-    if (data.email === "abc@gmail.com" && data.password === "abc") {
+  function fetchLogin(values: any) {
+    if (values.email === "abc@gmail.com" && values.password === "abc") {
       return true;
     } else {
       return false;
     }
   }
 
-  //   estructura y visualizacion de login que podra observar el usuario
   return (
-    <div className="w-full flex justify-center">
+    <div className="w-full flex justify-center ">
       <div className="mt-40">
-        <h1 className="text-2xl font-bold">Sistema de Carga de Datos</h1>
+        <h1 className="text-2xl font-bold">Sistema de carga de datos</h1>
         <div className="mx-8 mt-10">
-          <form
-            action=""
-            className="flex flex-col gap-4"
-            onSubmit={handleSumit}
+          <Formik
+            initialValues={{ email: "", password: "" }}
+            validationSchema={loginSchema}
+            onSubmit={(values) => {
+              handleSubmit(values);
+            }}
           >
-            <div className="flex flex-col gap-2">
-              <label htmlFor="">Email</label>
-              <input
-                className="px-2 py-1 border  rounded-md border-slate-500 outline-none"
-                type="text"
-                onChange={(e) => setData({ ...data, email: e.target.value })}
-              ></input>
-            </div>
-            <div className="flex flex-col gap-2">
-              <label htmlFor="">Password</label>
-              <input
-                className="px-2 py-1 border  rounded-md border-slate-500 outline-none"
-                type="password"
-                onChange={(e) => setData({ ...data, password: e.target.value })}
-              ></input>
-            </div>
-            <div className="flex flex-col gap-2">
-              <Button>Login</Button>
-            </div>
-          </form>
+            {({
+              values,
+              errors,
+              touched,
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              isSubmitting,
+              /* and other goodies */
+            }) => (
+              <form onSubmit={handleSubmit}>
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="">Email</label>
+                  <input
+                    autoComplete="off"
+                    className="px-2 py-1 border rounded-md border-slate-500 outline-none"
+                    type="email"
+                    name="email"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.email}
+                  />
+                  <span>{errors.email && touched.email && errors.email}</span>
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <label htmlFor="">Password</label>
+                  <input
+                    autoComplete="off"
+                    className="px-2 py-1 border rounded-md border-slate-500 outline-none"
+                    type="password"
+                    name="password"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.password}
+                  />
+                  <span>
+                    {errors.password && touched.password && errors.password}
+                  </span>
+                </div>
+
+                <Button type="submit" disabled={isSubmitting}>
+                  Submit
+                </Button>
+              </form>
+            )}
+            {/* <form
+              action=""
+              className="flex flex-col gap-4"
+              onSubmit={handleSubmit}
+            >
+              <div className="flex flex-col gap-2">
+                <label htmlFor="">Email</label>
+                <input
+                  className="px-2 py-1 border rounded-md border-slate-500 outline-none"
+                  type="text"
+                  onChange={(e) => setData({ ...data, email: e.target.value })}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="">Password</label>
+                <input
+                  className="px-2 py-1 border rounded-md  border-slate-500 outline-none"
+                  type="password"
+                  onChange={(e) =>
+                    setData({ ...data, password: e.target.value })
+                  }
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Button>Login</Button>
+              </div>
+            </form> */}
+          </Formik>
         </div>
       </div>
     </div>
   );
 }
+
+export default LoginPage;
